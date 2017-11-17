@@ -7,6 +7,7 @@ var bodyParser = require("body-parser");
 var expressHbs = require("express-handlebars");
 
 var mongoose = require("mongoose");
+var session = require("express-session");
 
 var index = require("./routes/index");
 
@@ -23,11 +24,24 @@ app.set("view engine", ".hbs");
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false })); //Were gonna receive respond in both json and urlencoded format
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", index);
+//Enable sessions
+// if resave: true, this session will be saved on the server on each request no matter
+// if something change or not.
+// saveUnitialized: true, session will be stored on the server even though it might
+// have not been added there or initialized
+app.use(
+  session({
+    secret: "mysupersecret",
+    resave: false,
+    saveUninitialized: false
+  })
+);
+app.use(express.static(path.join(__dirname, "public"))); //Able to open static files in public folder
+
+app.use("/", index); //routes in index.js
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
