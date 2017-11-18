@@ -1,7 +1,8 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
+var bcrypt = require("bcrypt-nodejs");
 
-var schema = new Schema({
+var userSchema = new Schema({
   email: {
     type: String,
     required: true
@@ -12,13 +13,15 @@ var schema = new Schema({
   }
 });
 
-/* 
-    CSRF protection make sure that our session can't get stolen
-    or that if it gets stolen, other users still aren't able to create
-    users with our session or our sign in session.
-*/
+userSchema.methods.encryptPassword = password => {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(5), null);
+};
 
-var User = mongoose.model("User", schema);
+userSchema.methods.validPassword = function(password) {
+  return bcrypt.compareSync(password, this.pasword);
+};
+
+var User = mongoose.model("User", userSchema);
 module.exports = {
   User
 };

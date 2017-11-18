@@ -8,6 +8,8 @@ var expressHbs = require("express-handlebars");
 
 var mongoose = require("mongoose");
 var session = require("express-session");
+var passport = require("passport");
+var flash = require("connect-flash");
 
 var index = require("./routes/index");
 
@@ -15,6 +17,7 @@ var app = express();
 
 //connect to database "shopping". It will create it if not exist
 mongoose.connect("localhost:27017/shopping");
+require("./config/passport");
 
 // view engine setup
 app.engine(".hbs", expressHbs({ defaultLayout: "layout", extname: ".hbs" }));
@@ -39,6 +42,9 @@ app.use(
     saveUninitialized: false
   })
 );
+app.use(flash()); //needs session to be initialized first
+app.use(passport.initialize());
+app.use(passport.session()); //needs session to be initialized first
 app.use(express.static(path.join(__dirname, "public"))); //Able to open static files in public folder
 
 app.use("/", index); //routes in index.js
