@@ -1,5 +1,5 @@
 var express = require("express");
-var router = express.Router();
+var router = express.Router(); //creates an instance of a router which we can attach routes to and export in app.js file
 var { Product } = require("../models/product");
 var csrf = require("csurf");
 var passport = require("passport");

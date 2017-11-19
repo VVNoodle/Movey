@@ -23,6 +23,25 @@ passport.use(
       passReqToCallback: true //literally lets you pass request in callback
     },
     (req, email, password, done) => {
+      //method from express-validator
+      req
+        .checkBody("email", "Invalid email")
+        .notEmpty()
+        .isEmail();
+      req
+        .checkBody("password", "Invalid password")
+        .notEmpty()
+        .isLength({ min: 5 });
+      var errors = req.validationErrors();
+      if (errors) {
+        var messages = [];
+        errors.forEach(error => {
+          //express-validator adds message field in error
+          messages.push(error.msg);
+        });
+        // didn't ge error, not successful, want to flash messages
+        return done(null, false, req.flash("error", messages));
+      }
       User.findOne(
         {
           email

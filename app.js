@@ -6,10 +6,11 @@ var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var expressHbs = require("express-handlebars");
 
-var mongoose = require("mongoose");
+var mongoose = require("mongoose"); //object modeling for our MongoDB database
 var session = require("express-session");
 var passport = require("passport");
 var flash = require("connect-flash");
+var validator = require("express-validator");
 
 var index = require("./routes/index");
 
@@ -28,6 +29,8 @@ app.set("view engine", ".hbs");
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false })); //Were gonna receive respond in both json and urlencoded format
+app.use(validator());
+
 app.use(cookieParser());
 
 //Enable sessions
