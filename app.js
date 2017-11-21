@@ -51,6 +51,12 @@ app.use(passport.initialize());
 app.use(passport.session()); //needs session to be initialized first // persistent login sessions
 app.use(express.static(path.join(__dirname, "public"))); //Able to open static files in public folder
 
+app.use((req, res, next) => {
+  // makes the login status available in all my views
+  res.locals.login = req.isAuthenticated();
+  next();
+});
+
 app.use("/user", user);
 app.use("/", index); //routes in index.js
 

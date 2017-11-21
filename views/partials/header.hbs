@@ -29,19 +29,28 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
+                        {{# if login }}
+
                         <li>
-                            <a href="#">Action</a>
+                            <a href="/user/profile">Profile</a>
                         </li>
+                        <li>
+                            <a href="/user/logout">Log out</a>
+                        </li>
+
+                        {{ else }}
                         <li>
                             <a href="#">Another action</a>
                         </li>
                         <li>
-                            <a href="#">Something else here</a>
+                            <a href="/user/signin">Log In</a>
                         </li>
                         <li role="separator" class="divider"></li>
                         <li>
-                            <a href="#">Separated link</a>
+                            <a href="/user/signup">Sign Up</a>
                         </li>
+
+                        {{/if }}
                     </ul>
                 </li>
             </ul>

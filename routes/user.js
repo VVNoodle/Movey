@@ -17,6 +17,12 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
   res.render("user/profile");
 });
 
+router.get("/logout", (req, res, next) => {
+  //method added by passport
+  req.logout();
+  res.redirect("/");
+});
+
 // middleware to ensure user can't redirect to these urls if already logged in
 router.use("/", notLoggedIn, (req, res, next) => {
   next();
@@ -57,12 +63,6 @@ router.post(
     failureFlash: true
   })
 );
-
-router.get("/logout", (req, res, next) => {
-  //method added by passport
-  req.logout();
-  res.redirect("/");
-});
 
 module.exports = router;
 
