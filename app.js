@@ -9,10 +9,11 @@ var expressHbs = require("express-handlebars");
 var mongoose = require("mongoose"); //object modeling for our MongoDB database
 var session = require("express-session");
 var passport = require("passport");
-var flash = require("connect-flash");
+var flash = require("connect-flash"); //allows for passing session flashdata messages
 var validator = require("express-validator");
 
 var index = require("./routes/index");
+var user = require("./routes/user");
 
 var app = express();
 
@@ -35,9 +36,9 @@ app.use(cookieParser());
 
 //Enable sessions
 // if resave: true, this session will be saved on the server on each request no matter
-// if something change or not.
+// if something change or not
 // saveUnitialized: true, session will be stored on the server even though it might
-// have not been added there or initialized
+// have not been initiliazed
 app.use(
   session({
     secret: "mysupersecret",
@@ -47,9 +48,10 @@ app.use(
 );
 app.use(flash()); //needs session to be initialized first
 app.use(passport.initialize());
-app.use(passport.session()); //needs session to be initialized first
+app.use(passport.session()); //needs session to be initialized first // persistent login sessions
 app.use(express.static(path.join(__dirname, "public"))); //Able to open static files in public folder
 
+app.use("/user", user);
 app.use("/", index); //routes in index.js
 
 // catch 404 and forward to error handler

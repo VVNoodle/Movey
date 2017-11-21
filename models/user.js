@@ -13,12 +13,13 @@ var userSchema = new Schema({
   }
 });
 
-userSchema.methods.encryptPassword = password => {
+userSchema.methods.encryptPassword = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(5), null);
 };
 
 userSchema.methods.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.pasword);
+  thisPassword = this.password;
+  return bcrypt.compareSync(password, thisPassword);
 };
 
 var User = mongoose.model("User", userSchema);
