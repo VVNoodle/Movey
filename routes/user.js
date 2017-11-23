@@ -17,7 +17,7 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
   res.render("user/profile");
 });
 
-router.get("/logout", (req, res, next) => {
+router.get("/logout", isLoggedIn, (req, res, next) => {
   //method added by passport
   req.logout();
   res.redirect("/");
