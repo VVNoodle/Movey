@@ -3,6 +3,8 @@ var router = express.Router(); //creates an instance of a router which we can at
 var { Product } = require("../models/product");
 var csrf = require("csurf");
 var passport = require("passport");
+var { Order } = require("../models/order");
+var Cart = require("../models/cart");
 
 /* 
     CSRF protection make sure that our session can't get stolen
@@ -14,7 +16,25 @@ csrfProtection = csrf();
 router.use(csrfProtection);
 
 router.get("/profile", isLoggedIn, (req, res, next) => {
-  res.render("user/profile");
+  Order.find(
+    {
+      user: req.user
+    },
+    (err, orders) => {
+      if (err) {
+        return res.write("ERROR");
+      }
+      console.log("biatch", orders);
+      var cart;
+      orders.forEach(order => {
+        cart = new Cart(order.cart);
+        order.items = cart.generateArray();
+      });
+      res.render("user/profile", {
+        orders
+      });
+    }
+  );
 });
 
 router.get("/logout", isLoggedIn, (req, res, next) => {
