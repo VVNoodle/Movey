@@ -49,6 +49,14 @@ router.get("/reduce/:id", (req, res) => {
   res.redirect("/shopping-cart");
 });
 
+router.get("/removeAll/:id", (req, res) => {
+  var cartId = req.params.id;
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
+  cart.removeAll(cartId);
+  req.session.cart = cart;
+  res.redirect("/shopping-cart");
+});
+
 router.get("/shopping-cart", (req, res) => {
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var cartArray = cart.generateArray();
