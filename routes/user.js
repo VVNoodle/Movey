@@ -43,7 +43,16 @@ router.post(
     successRedirect: "/user/profile",
     failureRedirect: "/user/signup",
     failureFlash: true
-  })
+  }),
+  (req, res) => {
+    if (req.session.oldUrl) {
+      var temp = req.session.oldUrl;
+      req.session.oldUrl = null; //clear oldUrl for next use
+      res.redirect(temp);
+    } else {
+      res.redirect("/user/profile");
+    }
+  }
 );
 
 router.get("/signin", (req, res, next) => {
@@ -58,10 +67,18 @@ router.get("/signin", (req, res, next) => {
 router.post(
   "/signin",
   passport.authenticate("local.signin", {
-    successRedirect: "/user/profile",
     failureRedirect: "/user/signin",
     failureFlash: true
-  })
+  }),
+  (req, res) => {
+    if (req.session.oldUrl) {
+      var temp = req.session.oldUrl;
+      req.session.oldUrl = null; //clear oldUrl for next use
+      res.redirect(temp);
+    } else {
+      res.redirect("/user/profile");
+    }
+  }
 );
 
 module.exports = router;

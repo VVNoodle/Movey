@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router(); //creates an instance of a router which we can attach routes to and export in app.js file
 var { Product } = require("../models/product");
+var { Order } = require("../models/order");
 var Cart = require("../models/cart");
 
 /* GET home page. */
@@ -51,7 +52,7 @@ router.get("/shopping-cart", (req, res) => {
   });
 });
 
-router.get("/checkout", (req, res) => {
+router.get("/checkout", isLoggedIn, (req, res) => {
   if (!req.session.cart) {
     return res.redirect("/shopping-cart");
   }
@@ -63,7 +64,7 @@ router.get("/checkout", (req, res) => {
     noError: errMsg.length === 0
   });
 });
-router.post("/checkout", (req, res) => {
+router.post("/checkout", isLoggedIn, (req, res) => {
   if (!req.session.cart) {
     return res.redirect("/shopping-cart");
   }
@@ -81,11 +82,34 @@ router.post("/checkout", (req, res) => {
         req.flash("error", err.message);
         return res.redirect("/checkout");
       }
-      req.flash("success", "Successfully purchased product!");
-      req.cart = null;
-      res.redirect("/");
+      var order = new Order({
+        user: req.user, //passport does this for us after we log in
+        cart,
+        address: req.body.address, //gets the value from form of name "address"
+        name: req.body.name,
+        paymentId: charge.id
+      });
+      order.save((err, result) => {
+        if (err) {
+          req.flash("error", err.message);
+          return res.redirect("/checkout");
+        }
+        req.flash("success", "Successfully purchased product!");
+        req.session.cart = null;
+        res.redirect("/");
+      });
     }
   );
 });
+
+function isLoggedIn(req, res, next) {
+  // method added by passport, manages the authentication state on this session.
+  // when logged in it's set to true, otherwise false
+  if (req.isAuthenticated()) {
+    return next(); //next() == continue
+  }
+  req.session.oldUrl = req.url; //url the user tried to access
+  res.redirect("/user/signin"); //otherwise, redirect to starting page
+}
 
 module.exports = router;
