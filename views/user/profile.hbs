@@ -1,1 +1,26 @@
-<h1>Profile Page</h1>
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <h1>User Profile</h1>
+        <hr>
+        <h2>My Orders</h2>
+        {{!-- Panel --}} {{# each orders}}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                {{!-- Badge --}}
+                <ul class="list-group">
+                    {{# each this.items }}
+                    <li class="list-group-item">
+                        <span class="badge">{{this.price}}</span>
+                        {{this.item.title}} | {{this.qty}} Unit(s)
+                    </li>
+                    {{/each }}
+                </ul>
+            </div>
+            {{!-- Footer --}}
+            <div class="panel-footer">
+                <strong>Total Price: ${{this.cart.totalPrice}}</strong>
+            </div>
+        </div>
+        {{/each }}
+    </div>
+</div>

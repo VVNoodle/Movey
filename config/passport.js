@@ -3,6 +3,7 @@ var passport = require("passport");
 var { User } = require("../models/user");
 var LocalStrategy = require("passport-local").Strategy;
 
+// http://toon.io/understanding-passportjs-authentication-flow/
 // Stores the user in the session
 passport.serializeUser((user, done) => {
   done(null, user.id); //Whenever you want to store use in session, serialize it by id. First argument is the error case
@@ -94,7 +95,7 @@ passport.use(
           //express-validator adds message field in error
           messages.push(error.msg);
         });
-        // didn't ge error, not successful, want to flash messages
+        // didn't get error, not successful, want to flash messages
         return done(null, false, req.flash("error", messages));
       }
 
@@ -117,7 +118,8 @@ passport.use(
               req.flash("error", "Password is not valid")
             );
           }
-          console.log("Testdfdf");
+
+          // user found!
           return done(null, user);
         }
       );

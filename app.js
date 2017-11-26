@@ -6,11 +6,12 @@ var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var expressHbs = require("express-handlebars");
 
-var mongoose = require("mongoose"); //object modeling for our MongoDB database
+var mongoose = require("mongoose"); //object modeling for MongoDB database
 var session = require("express-session");
 var passport = require("passport");
 var flash = require("connect-flash"); //allows for passing session flashdata messages
 var validator = require("express-validator");
+var MongoStore = require("connect-mongo")(session);
 
 var index = require("./routes/index");
 var user = require("./routes/user");
@@ -30,20 +31,26 @@ app.set("view engine", ".hbs");
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false })); //Were gonna receive respond in both json and urlencoded format
-app.use(validator());
+app.use(validator()); //validates email and password
 
 app.use(cookieParser());
 
 //Enable sessions
-// if resave: true, this session will be saved on the server on each request no matter
-// if something change or not
-// saveUnitialized: true, session will be stored on the server even though it might
+// resave: true <- this session will be saved on the server on each request even
+// if there's no change
+// saveUnitialized: true <- session will be stored on the server even though it might
 // have not been initiliazed
 app.use(
   session({
     secret: "mysupersecret",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection
+    }),
+    cookie: {
+      maxAge: 180 * 60 * 1000 //how long session should leave //3 hours
+    }
   })
 );
 app.use(flash()); //needs session to be initialized first
@@ -51,9 +58,10 @@ app.use(passport.initialize());
 app.use(passport.session()); //needs session to be initialized first // persistent login sessions
 app.use(express.static(path.join(__dirname, "public"))); //Able to open static files in public folder
 
+// makes the login status and session available in all my views
 app.use((req, res, next) => {
-  // makes the login status available in all my views
   res.locals.login = req.isAuthenticated();
+  res.locals.session = req.session;
   next();
 });
 
