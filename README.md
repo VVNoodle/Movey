@@ -1,9 +1,5 @@
-﻿# Shoply
-
-Multiplayer browser game where one player gets a random image, sketch it, and
-the other guess. If the guess is wrong, the second player looses 10 points. Then
-they change turns. A player lose if they have 0 points left. Initially, each
-player has 20 points.
+﻿# Movey
+Online movie store.
 
 ## How to Install
 
